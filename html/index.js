@@ -31,22 +31,19 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 // Create the number of samples we want for our audio buffer,
 // As well as create an empty stereo buffer at the sample rate of the AudioContext
-const numberOfSamples = 1024;
+const bufferSize = 1024;
 const audioBuffer = audioContext.createBuffer(
   2,
-  numberOfSamples,
+  bufferSize,
   audioContext.sampleRate
 );
 
-console.log('sample rate', audioContext.sampleRate);
-// 44100 samples/second
-// 1024 samples/buffer
-// ~43 buffers/second
-
+console.log('Sample rate:', audioContext.sampleRate);
+console.log('Buffer size:', bufferSize);
 
 // Create our originalAudioSamples, and our amplifiedAudioSamples Buffers
-const originalAudioSamples = new Float32Array(numberOfSamples);
-const amplifiedAudioSamples = new Float32Array(numberOfSamples);
+const originalAudioSamples = new Float32Array(bufferSize);
+const amplifiedAudioSamples = new Float32Array(bufferSize);
 
 // Function to convert float samples to byte samples
 // This is mostly for demostration purposes.
@@ -106,26 +103,22 @@ const runWasm = async () => {
   const inputBufferSize = exports.getInputBufferSize();
   const outputBufferSize = exports.getOutputBufferSize();
 
+  // const frequency = 256 // hz
+  // const samplesPerCycle = audioContext.sampleRate / frequency;
+  
   // Generate 1024 float audio samples,
   // and make a quiet / simple square wave
-
-  const frequency = 256 // hz
-  // 440 cycles/second
-  // 44100 samples/second
-  // ~100 samples/cycle
-  const samplesPerCycle = audioContext.sampleRate / frequency;
-
   const amplitude = 0.3;
-  for (let i = 0; i < numberOfSamples; i++) {
-    const x = (i % samplesPerCycle) / samplesPerCycle; // 0 to 1
-    const y = Math.sin(x * 2 * Math.PI);
-    originalAudioSamples[i] = amplitude * y;
+  for (let i = 0; i < bufferSize; i++) {
+    // const x = (i % samplesPerCycle) / samplesPerCycle; // 0 to 1
+    // const y = Math.sin(x * 2 * Math.PI);
+    // originalAudioSamples[i] = amplitude * y;
 
-    // if (i < numberOfSamples / 2) {
-    //   originalAudioSamples[i] = amplitude;
-    // } else {
-    //   originalAudioSamples[i] = amplitude * -1;
-    // }
+    if (i < bufferSize / 2) {
+      originalAudioSamples[i] = amplitude;
+    } else {
+      originalAudioSamples[i] = amplitude * -1;
+    }
   }
 
   // Convert our float audio samples

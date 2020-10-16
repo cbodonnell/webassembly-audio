@@ -53,9 +53,9 @@ func amplifyAudioInBuffer() {
 		// Byte samples are represented as follows:
 		// 127 is silence, 0 is negative max, 256 is positive max
 		if audioSample > 127 {
-			// audioSampleDiff := audioSample - 127
-			// audioSample = audioSample + audioSampleDiff
-			audioSample = audioSample*2 - 127
+			audioSampleDiff := audioSample - 127
+			audioSample = audioSample + audioSampleDiff
+			// audioSample = audioSample*2 - 127
 		} else if audioSample < 127 {
 			audioSample = audioSample / 2
 		}
